@@ -10,7 +10,7 @@ function start() {
     textRobot(content)
 
     function askAndReturnSearchedTerm() {
-        return readLine.question("Search:")
+        return readLine.question("What do you to search:")
     }
 
     function askAndReturnPrefix() {
