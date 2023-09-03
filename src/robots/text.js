@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import wiki from "wikipedia";
+import { sentences } from "sbd";
 
 function textRobot(content) {
     fetchContentFromWikipedia(content);
@@ -18,7 +19,8 @@ function textRobot(content) {
 
     function sanitizeContent(text) {
         const sanitizeText = withoutBlankLinesAndMarkdown(text);
-        console.log(sanitizeText);
+        const clearText = breakContentIntoSentences(sanitizeText);
+        console.log(clearText);
 
         function withoutBlankLinesAndMarkdown(text) {
             const allLines = text.split('\n');
@@ -30,7 +32,21 @@ function textRobot(content) {
             })
             return withoutBlankLinesAndMarkdown.join(" ");
         }
+    }
 
+    function breakContentIntoSentences(text) {
+        content.sentences = []
+        const textSentences = sentences(text);
+
+        textSentences.forEach(sentence => {
+            content.sentences.push({
+                text: sentence,
+                keywords: [],
+                images: []
+            })
+        });
+
+        return content.sentences;
 
     }
 }
