@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import wiki from "wikipedia";
 import { sentences } from "sbd";
+import natural from "natural";
 
 function textRobot(content) {
     fetchContentFromWikipedia(content);
@@ -8,7 +9,7 @@ function textRobot(content) {
     async function fetchContentFromWikipedia(content) {
 
         try {
-            await wiki.setLang('pt');
+            await wiki.setLang('en');
             const page = await wiki.page(`${content.searchTerm}`)
             content.originalSource = await page.content();
             sanitizeContent(content.originalSource)
@@ -35,19 +36,40 @@ function textRobot(content) {
     }
 
     function breakContentIntoSentences(text) {
-        content.sentences = []
+        content.sentences = [];
         const textSentences = sentences(text);
 
         textSentences.forEach(sentence => {
             content.sentences.push({
                 text: sentence,
-                keywords: [],
+                keywords: takeKeywords(sentence),
                 images: []
             })
         });
 
         return content.sentences;
 
+    }
+
+    function takeKeywords(setence) {
+        const tags = new natural.WordTokenizer();
+        const tokens = tags.tokenize(setence);
+
+        const wordFreq = {};
+        for (const token of tokens) {
+            const word = token.toLowerCase();
+            if (wordFreq[word]) {
+                wordFreq[word]++;
+            } else {
+                wordFreq[word] = 1;
+            }
+
+        }
+
+        const keywordThreshold = 1;
+        const keywords = Object.keys(wordFreq).filter(word => wordFreq[word] > keywordThreshold);
+
+        return keywords;
     }
 }
 
