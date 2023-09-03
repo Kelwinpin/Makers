@@ -1,25 +1,12 @@
-import readLine from "readline-sync"
-import textRobot from "./src/robots/text.js"
+import { input } from "./src/robots/input.js"
+import { load } from "./src/robots/saveBot.js";
+import textRobot from "./src/robots/text.js";
 
 function start() {
-    const content = {}
-
-    content.searchTerm = askAndReturnSearchedTerm();
-    content.prefix = askAndReturnPrefix();
-
-    textRobot(content)
-
-    function askAndReturnSearchedTerm() {
-        return readLine.question("What do you to search:")
-    }
-
-    function askAndReturnPrefix() {
-        const prefixes = ["Who is", "What is", "The history of"];
-        const selectOption = readLine.keyInSelect(prefixes);
-        return prefixes[selectOption];
-    }
-
-    console.log(content)
+    input();
+    textRobot();
+    const content = load()
+    console.dir(content, { depth: null })
 }
 
 start()

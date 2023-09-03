@@ -2,17 +2,19 @@ import chalk from "chalk";
 import wiki from "wikipedia";
 import { sentences } from "sbd";
 import natural from "natural";
+import { load, save } from "./saveBot.js"
 
-function textRobot(content) {
+function textRobot() {
+    const content = load()
     fetchContentFromWikipedia(content);
 
     async function fetchContentFromWikipedia(content) {
-
         try {
             await wiki.setLang('en');
             const page = await wiki.page(`${content.searchTerm}`)
             content.originalSource = await page.content();
-            sanitizeContent(content.originalSource)
+            sanitizeContent(content.originalSource);
+            save(content);
         } catch (error) {
             console.log(chalk.redBright(error.message));
         }
@@ -48,7 +50,6 @@ function textRobot(content) {
         });
 
         return content.sentences;
-
     }
 
     function takeKeywords(setence) {
@@ -63,12 +64,9 @@ function textRobot(content) {
             } else {
                 wordFreq[word] = 1;
             }
-
         }
-
         const keywordThreshold = 1;
         const keywords = Object.keys(wordFreq).filter(word => wordFreq[word] > keywordThreshold);
-
         return keywords;
     }
 }
